@@ -1,122 +1,230 @@
-// class Deck{
-//     constructor(){
-//     this.cards = [1,2,3,4,5,6,7,8,9,10,10,10,10,
-//                   1,2,3,4,5,6,7,8,9,10,10,10,10,
-//                   1,2,3,4,5,6,7,8,9,10,10,10,10,
-//                   1,2,3,4,5,6,7,8,9,10,10,10,10]   
-//     }
+const canvas = document.querySelector('canvas');
+const ctx = canvas.getContext('2d');
 
-//     shuffle(){ //Fisher-Yates shuffle
+class Deck{
+    constructor(){
+    this.cards = [];
+    }
+
+    shuffle(){ //Fisher-Yates shuffle
  
-//         for(let i = 0; i < this.cards.length;  i++){
-//             let rand = Math.floor(Math.random()*this.cards.length);
-//             let temp = this.cards[rand];
-//             this.cards[rand] = this.cards[i];
-//             this.cards[i] = temp;
-//         }
-//     }
+        for(let i = 0; i < this.cards.length;  i++){
+            let rand = Math.floor(Math.random()*this.cards.length);
+            let temp = this.cards[rand];
+            this.cards[rand] = this.cards[i];
+            this.cards[i] = temp;
+        }
+    }
 
-//     getCard(){
-//         return this.cards.shift();
-//     }
+    getCard(){
+        return this.cards.shift();
+    }
     
-//     reset(){
-//         this.cards = [1,2,3,4,5,6,7,8,9,10,10,10,10,
-//             1,2,3,4,5,6,7,8,9,10,10,10,10,
-//             1,2,3,4,5,6,7,8,9,10,10,10,10,
-//             1,2,3,4,5,6,7,8,9,10,10,10,10]   
-//     }
-// }
+    reset(){}  
+}
 
-// class Player{
-//     constructor(){
-//         this.hand = [];
-//     }
+class Card{
+    constructor(value,imgFile){
+        this.value = value;
+        this.image = new Image();
+        this.image.src = imgFile;
+    }
 
-//     displayHand(){
-//         let cardString = '';
-//         for(let i = 0; i < this.hand.length; i++){
-//             cardString += this.hand[i] + ' ';
-//         }
-//         return ' Hand:' + cardString;
-//     }
+}
 
-//     getHandValue(){
-//         let sum = 0;
-//         for(let i = 0; i < this.hand.length; i++){
-//             sum += this.hand[i];
-//         }
-//         return sum;
-//     }
-// }
+class Player{
+    constructor(){
+        this.hand = [];
+    }
 
-// let cards = new Deck();
+    displayHand(x,y){
+        ctx.fillStyle = '#168d52';
+        ctx.fillRect(x,y,canvas.width,50);
+        for(let i = 0; i < this.hand.length; i++){
+            ctx.drawImage(this.hand[i].image,x+(i*100), y,80,120);
+        }
+        // ctx.fillText(this.getHandValue(),x, y+50);
 
-// let player = new Player();
-// let dealer = new Player();
+    }
 
+    getHandValue(){
+        let sum = 0;
+        for(let i = 0; i < this.hand.length; i++){
+            sum += this.hand[i].value;
+        }
+        return sum;
+    }
+}
 
-// cards.shuffle();
+function displayText(text,x,y){
+    ctx.fillStyle = '#168d52';
+    ctx.fillRect(x,y,canvas.width,10);
+    ctx.font = '18px serif';
+    ctx.fillStyle = "black";
+    ctx.fillText(text,x, y);
+}
 
-// player.hand.push(cards.getCard());
-// player.hand.push(cards.getCard());
-// console.log('Player',player.displayHand());
-// console.log('Value: ', player.getHandValue());
-
-// dealer.hand.push(cards.getCard());
-// dealer.hand.push(cards.getCard());
-// console.log("Dealer: ? ?");
-
-// let playerBust = false;
-// let playerWin = false;
-
-// while(player.getHandValue() < 21){
-//     let choice = prompt("Hit or stay?");
-//     if(choice == 'hit'){
-//         player.hand.push(cards.getCard()); 
-//         console.log('Player',player.displayHand());
-//         console.log('Value: ', player.getHandValue());
-
-//         if(player.getHandValue() == 21){
-//             console.log("You won!");
-//             playerWin = true;
-//             break;
-//         }
-
-//         if(player.getHandValue() > 21){
-//             console.log("You lost!");
-//             playerBust = true;
-//             break;
-//         }
-//     }
-//     if(choice == 'stay'){
-//         break;
-//     }
-// }
-
-// if(!playerBust && !playerWin){
-//     while(dealer.getHandValue() < 17){
-//         dealer.hand.push(cards.getCard()); 
-//     }
-//     console.log('Dealer',dealer.displayHand());
-//     console.log('Value: ', dealer.getHandValue());
-    
-//     if(dealer.getHandValue() == 21){
-//         console.log("You lost!");
-//     }
-//     else if(dealer.getHandValue() > 21){
-//         console.log("Dealer busts. You won!");
-//     }    
-//     else{
-//         if(21 - dealer.getHandValue() < 21 - player.getHandValue()){
-//         console.log("Dealer wins. You lost!");
-//         }
-//         else{
-//             console.log("You win!");
-//         }   
-//     }
-// }
+function drawBtn(){
+    ctx.fillStyle = 'red';
+    ctx.fillRect(160,470,100,40);
+    ctx.fillRect(300,470,100,40);
+    ctx.fillStyle = 'black';
+    ctx.fillText('HIT',200, 495);
+    ctx.fillText('STAY',340, 495);
+}
 
 
+// deck.cards.push(new Card(10,'../blackjack/Cards/Hearts/K-Heart.png'));
 
+    ctx.fillStyle = '#168d52';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    let deck = new Deck();
+    populateDeck();
+    deck.shuffle();
+
+    let player = new Player();
+    let dealer = new Player();
+
+    let cardBack = new Card(0,'../blackjack/Cards/cardback.png');
+
+window.onload = (event) => {
+    drawBtn();
+
+    displayText('DEALER',50,50);
+    displayText('PLAYER',50,300);
+
+    dealer.hand.push(deck.getCard());
+    dealer.hand.push(deck.getCard());
+    displayDealerStart();
+
+    player.hand.push(deck.getCard());
+    player.hand.push(deck.getCard());
+    player.displayHand(50,330);
+
+
+    let playerBust = false;
+    let playerWin = false;
+
+    hitBtn();
+    stayBtn();
+};
+
+function displayDealerStart(){
+    ctx.drawImage(cardBack.image,50,80,80,120);   
+    ctx.drawImage(dealer.hand[1].image,50+100,80,80,120);
+}
+
+
+function stayBtn(){
+    window.addEventListener('click',function(event){
+        if(event.clientX >= 300 && event.clientX <= 400 &&
+            event.clientY >= 470 && event.clientY <= 510){
+                while(dealer.getHandValue() < 17){
+                    dealer.hand.push(deck.getCard()); 
+                }
+            
+                dealer.displayHand(50,80);
+                
+                if(dealer.getHandValue() == player.getHandValue()){
+                    console.log("You tied!");
+                }
+                if(dealer.getHandValue() == 21){
+                    console.log("You lost!");
+                }
+                else if(dealer.getHandValue() > 21){
+                    console.log("Dealer busts. You won!");
+                }    
+                else{
+                    if(21 - dealer.getHandValue() < 21 - player.getHandValue()){
+                    console.log("Dealer wins. You lost!");
+                    }
+                    else{
+                        console.log("You win!");
+                    }   
+                }
+    }});
+}
+
+
+function hitBtn(){
+    const hitBtn = window.addEventListener('click',function(event){
+        if(event.clientX >= 160 && event.clientX <= 260 &&
+            event.clientY >= 470 && event.clientY <= 510){
+            if(player.getHandValue() < 21){
+                console.log("HIT");
+                player.hand.push(deck.getCard()); 
+                player.displayHand(50,330);
+
+                if(player.getHandValue() == 21){
+                    console.log("You won!");
+                    playerWin = true;
+                }
+
+                if(player.getHandValue() > 21){
+                    console.log("You lost!");
+                    playerBust = true;
+                }
+            }
+        }
+    });
+}
+
+
+function populateDeck(){
+    deck.cards.push(new Card(10,'../blackjack/Cards/Hearts/K-Heart.png'));
+    deck.cards.push(new Card(10,'../blackjack/Cards/Hearts/Q-Heart.png'));
+    deck.cards.push(new Card(10,'../blackjack/Cards/Hearts/J-Heart.png'));
+    deck.cards.push(new Card(10,'../blackjack/Cards/Hearts/10-Heart.png'));
+    deck.cards.push(new Card(9,'../blackjack/Cards/Hearts/9-Heart.png'));
+    deck.cards.push(new Card(8,'../blackjack/Cards/Hearts/8-Heart.png'));
+    deck.cards.push(new Card(7,'../blackjack/Cards/Hearts/7-Heart.png'));
+    deck.cards.push(new Card(6,'../blackjack/Cards/Hearts/6-Heart.png'));
+    deck.cards.push(new Card(5,'../blackjack/Cards/Hearts/5-Heart.png'));
+    deck.cards.push(new Card(4,'../blackjack/Cards/Hearts/4-Heart.png'));
+    deck.cards.push(new Card(3,'../blackjack/Cards/Hearts/3-Heart.png'));
+    deck.cards.push(new Card(2,'../blackjack/Cards/Hearts/2-Heart.png'));
+    deck.cards.push(new Card(1,'../blackjack/Cards/Hearts/A-Heart.png'));
+
+    deck.cards.push(new Card(10,'../blackjack/Cards/Diamonds/K-Diamond.png'));
+    deck.cards.push(new Card(10,'../blackjack/Cards/Diamonds/Q-Diamond.png'));
+    deck.cards.push(new Card(10,'../blackjack/Cards/Diamonds/J-Diamond.png'));
+    deck.cards.push(new Card(10,'../blackjack/Cards/Diamonds/10-Diamond.png'));
+    deck.cards.push(new Card(9,'../blackjack/Cards/Diamonds/9-Diamond.png'));
+    deck.cards.push(new Card(8,'../blackjack/Cards/Diamonds/8-Diamond.png'));
+    deck.cards.push(new Card(7,'../blackjack/Cards/Diamonds/7-Diamond.png'));
+    deck.cards.push(new Card(6,'../blackjack/Cards/Diamonds/6-Diamond.png'));
+    deck.cards.push(new Card(5,'../blackjack/Cards/Diamonds/5-Diamond.png'));
+    deck.cards.push(new Card(4,'../blackjack/Cards/Diamonds/4-Diamond.png'));
+    deck.cards.push(new Card(3,'../blackjack/Cards/Diamonds/3-Diamond.png'));
+    deck.cards.push(new Card(2,'../blackjack/Cards/Diamonds/2-Diamond.png'));
+    deck.cards.push(new Card(1,'../blackjack/Cards/Diamonds/A-Diamond.png'));
+
+    deck.cards.push(new Card(10,'../blackjack/Cards/Spades/K-Spade.png'));
+    deck.cards.push(new Card(10,'../blackjack/Cards/Spades/Q-Spade.png'));
+    deck.cards.push(new Card(10,'../blackjack/Cards/Spades/J-Spade.png'));
+    deck.cards.push(new Card(10,'../blackjack/Cards/Spades/10-Spade.png'));
+    deck.cards.push(new Card(9,'../blackjack/Cards/Spades/9-Spade.png'));
+    deck.cards.push(new Card(8,'../blackjack/Cards/Spades/8-Spade.png'));
+    deck.cards.push(new Card(7,'../blackjack/Cards/Spades/7-Spade.png'));
+    deck.cards.push(new Card(6,'../blackjack/Cards/Spades/6-Spade.png'));
+    deck.cards.push(new Card(5,'../blackjack/Cards/Spades/5-Spade.png'));
+    deck.cards.push(new Card(4,'../blackjack/Cards/Spades/4-Spade.png'));
+    deck.cards.push(new Card(3,'../blackjack/Cards/Spades/3-Spade.png'));
+    deck.cards.push(new Card(2,'../blackjack/Cards/Spades/2-Spade.png'));
+    deck.cards.push(new Card(1,'../blackjack/Cards/Spades/A-Spade.png'));
+
+    deck.cards.push(new Card(10,'../blackjack/Cards/Clubs/K-Club.png'));
+    deck.cards.push(new Card(10,'../blackjack/Cards/Clubs/Q-Club.png'));
+    deck.cards.push(new Card(10,'../blackjack/Cards/Clubs/J-Club.png'));
+    deck.cards.push(new Card(10,'../blackjack/Cards/Clubs/10-Club.png'));
+    deck.cards.push(new Card(9,'../blackjack/Cards/Clubs/9-Club.png'));
+    deck.cards.push(new Card(8,'../blackjack/Cards/Clubs/8-Club.png'));
+    deck.cards.push(new Card(7,'../blackjack/Cards/Clubs/7-Club.png'));
+    deck.cards.push(new Card(6,'../blackjack/Cards/Clubs/6-Club.png'));
+    deck.cards.push(new Card(5,'../blackjack/Cards/Clubs/5-Club.png'));
+    deck.cards.push(new Card(4,'../blackjack/Cards/Clubs/4-Club.png'));
+    deck.cards.push(new Card(3,'../blackjack/Cards/Clubs/3-Club.png'));
+    deck.cards.push(new Card(2,'../blackjack/Cards/Clubs/2-Club.png'));
+    deck.cards.push(new Card(1,'../blackjack/Cards/Clubs/A-Club.png'));
+}
 
