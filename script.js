@@ -154,20 +154,6 @@ function clearRules(){
     ctx.fillRect(500,50,500,400);
 }
 
-// function resetGame(){
-//     ctx.fillStyle = '#1B3627';
-//     ctx.fillRect(0,0,canvas.width,canvas.height);
-
-//     player.reset();
-//     dealer.reset();
-//     deck.reset();
-//     populateDeck();
-//     deck.shuffle();
-
-//     playerBust = false;
-//     playerWin = false;
-// }
-
 function displayDealerStart(){
     ctx.drawImage(cardBack.image,50,100,80,120);   
     ctx.drawImage(dealer.hand[1].image,50+100,100,80,120);
