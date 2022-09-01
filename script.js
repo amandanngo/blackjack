@@ -29,7 +29,7 @@ class Card{
     constructor(value,imgFile){
         this.value = value;
         this.image = new Image();
-        this.image.src = imgFile;
+        this.image.src = './' + imgFile;
     }
 }
 
@@ -129,23 +129,44 @@ function play(){
     player.hand.push(deck.getCard());
     player.displayHand(50,350);
 
+    displayRules();
+
     hitBtn();
     stayBtn(); 
 }
 
-function resetGame(){
-    ctx.fillStyle = '#1B3627';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    player.reset();
-    dealer.reset();
-    deck.reset();
-    populateDeck();
-    deck.shuffle();
-
-    playerBust = false;
-    playerWin = false;
+function displayRules(){
+    displayText("RULES",500,80);
+    displayText("- Get your hand as close to 21 as possible,",500,120);
+    displayText("  without going over 21",503,150);
+    displayText("- Hit to receive another card",500,180);
+    displayText("- Stay to keep your hand and move the turn",500,210);
+    displayText("  to the dealer",504,240);
+    displayText("-The dealer has to draw cards until their",504,270);
+    displayText("  hand is over 17",504,300);
+    displayText("-Whoever first gets exactly 21 or closest",504,330);
+    displayText("  to 21 wins",504,360);
+    displayText("-Going over 21 is an automatic loss",504,390);
 }
+
+function clearRules(){
+    ctx.fillStyle = '#1B3627';
+    ctx.fillRect(500,50,500,400);
+}
+
+// function resetGame(){
+//     ctx.fillStyle = '#1B3627';
+//     ctx.fillRect(0,0,canvas.width,canvas.height);
+
+//     player.reset();
+//     dealer.reset();
+//     deck.reset();
+//     populateDeck();
+//     deck.shuffle();
+
+//     playerBust = false;
+//     playerWin = false;
+// }
 
 function displayDealerStart(){
     ctx.drawImage(cardBack.image,50,100,80,120);   
@@ -156,8 +177,7 @@ function resetBtn(){
     window.addEventListener('click',function(event){
         if(event.clientX-canvas.offsetLeft >= 370 && event.clientX-canvas.offsetLeft <= 570 &&
             event.clientY-canvas.offsetTop >= 330 && event.clientY-canvas.offsetTop <= 370){
-                resetGame();
-                play();
+                window.location.reload();
         }
     });
 }
@@ -168,6 +188,7 @@ function stayBtn(){
         if(event.clientX-canvas.offsetLeft >= 300 && event.clientX-canvas.offsetLeft <= 400 &&
                 event.clientY-canvas.offsetTop >= 500 && event.clientY-canvas.offsetTop <= 540){
             if(playerBust == false && playerWin == false){
+                clearRules();
                 while(dealer.getHandValue() < 17){
                     dealer.hand.push(deck.getCard()); 
                 }
@@ -207,6 +228,7 @@ function hitBtn(){
         if(event.clientX-canvas.offsetLeft >= 160 && event.clientX-canvas.offsetLeft <= 260 &&
             event.clientY-canvas.offsetTop >= 500 && event.clientY-canvas.offsetTop <= 540){
             
+            clearRules();
             if(player.getHandValue() < 21){
                 player.hand.push(deck.getCard()); 
                 player.displayHand(50,350);
