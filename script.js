@@ -1,3 +1,5 @@
+
+
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 
@@ -38,12 +40,18 @@ class Player{
     }
 
     displayHand(x,y){
-        ctx.fillStyle = '#168d52';
-        ctx.fillRect(x,y,canvas.width,50);
+        ctx.fillStyle = '#1B3627';
+        ctx.fillRect(x,y,canvas.width,100);
         for(let i = 0; i < this.hand.length; i++){
             ctx.drawImage(this.hand[i].image,x+(i*100), y,80,120);
         }
-        // ctx.fillText(this.getHandValue(),x, y+50);
+        drawCircles();
+        this.displayValue(x,y);
+    }
+
+    displayValue(x,y){
+        ctx.fillStyle = "black";
+        ctx.fillText(this.getHandValue(),x+120,y-50);
 
     }
 
@@ -57,41 +65,49 @@ class Player{
 }
 
 function displayText(text,x,y){
-    ctx.fillStyle = '#168d52';
+    ctx.fillStyle = '#1B3627';
     ctx.fillRect(x,y,canvas.width,10);
-    ctx.font = '18px serif';
-    ctx.fillStyle = "black";
+    ctx.font = '22px oswald';
+    ctx.fillStyle = "#CCC7B9";
     ctx.fillText(text,x, y);
 }
 
 function drawBtn(){
-    ctx.fillStyle = 'red';
-    ctx.fillRect(160,470,100,40);
-    ctx.fillRect(300,470,100,40);
-    ctx.fillStyle = 'black';
-    ctx.fillText('HIT',200, 495);
-    ctx.fillText('STAY',340, 495);
+    ctx.drawImage(hitButton.image,160,500);
+    ctx.drawImage(stayButton.image,300,500);
 }
 
+function drawCircles(){
+    ctx.beginPath();
+    ctx.arc(180, 290, 25, 0, 2 * Math.PI);
+    ctx.arc(180, 40, 25, 0, 2 * Math.PI);
+    ctx.fillStyle = '#E2D4BA';
+    ctx.fill();
+    ctx.closePath();
+}
 
-// deck.cards.push(new Card(10,'../blackjack/Cards/Hearts/K-Heart.png'));
+ctx.fillStyle = '#1B3627';
+ctx.fillRect(0,0,canvas.width,canvas.height);
+let deck = new Deck();
+populateDeck();
+deck.shuffle();
 
-    ctx.fillStyle = '#168d52';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    let deck = new Deck();
-    populateDeck();
-    deck.shuffle();
+let player = new Player();
+let dealer = new Player();
 
-    let player = new Player();
-    let dealer = new Player();
+let cardBack = new Card(0,'../blackjack/Cards/cardback.png');
+let hitButton = new Card(0,'../blackjack/Cards/hit-button.png');
+let stayButton = new Card(0,'../blackjack/Cards/stay-button.png');
 
-    let cardBack = new Card(0,'../blackjack/Cards/cardback.png');
+    let playerBust = false;
+    let playerWin = false;
 
 window.onload = (event) => {
-    drawBtn();
-
     displayText('DEALER',50,50);
     displayText('PLAYER',50,300);
+
+    drawCircles()
+    drawBtn();
 
     dealer.hand.push(deck.getCard());
     dealer.hand.push(deck.getCard());
@@ -99,61 +115,65 @@ window.onload = (event) => {
 
     player.hand.push(deck.getCard());
     player.hand.push(deck.getCard());
-    player.displayHand(50,330);
-
-
-    let playerBust = false;
-    let playerWin = false;
+    player.displayHand(50,350);
 
     hitBtn();
-    stayBtn();
+    stayBtn(); 
+    
 };
 
 function displayDealerStart(){
-    ctx.drawImage(cardBack.image,50,80,80,120);   
-    ctx.drawImage(dealer.hand[1].image,50+100,80,80,120);
+    ctx.drawImage(cardBack.image,50,100,80,120);   
+    ctx.drawImage(dealer.hand[1].image,50+100,100,80,120);
 }
 
 
 function stayBtn(){
-    window.addEventListener('click',function(event){
-        if(event.clientX >= 300 && event.clientX <= 400 &&
-            event.clientY >= 470 && event.clientY <= 510){
-                while(dealer.getHandValue() < 17){
-                    dealer.hand.push(deck.getCard()); 
-                }
-            
-                dealer.displayHand(50,80);
-                
-                if(dealer.getHandValue() == player.getHandValue()){
-                    console.log("You tied!");
-                }
-                if(dealer.getHandValue() == 21){
-                    console.log("You lost!");
-                }
-                else if(dealer.getHandValue() > 21){
-                    console.log("Dealer busts. You won!");
-                }    
-                else{
-                    if(21 - dealer.getHandValue() < 21 - player.getHandValue()){
-                    console.log("Dealer wins. You lost!");
+
+    
+        window.addEventListener('click',function(event){
+            if(event.clientX >= 300 && event.clientX <= 400 &&
+                event.clientY >= 500 && event.clientY <= 540){
+
+                if(playerBust == false && playerWin == false){
+                    while(dealer.getHandValue() < 17){
+                        dealer.hand.push(deck.getCard()); 
                     }
+                
+                    dealer.displayHand(50,100);
+                    
+                    if(dealer.getHandValue() == player.getHandValue()){
+                        console.log("You tied!");
+                    }
+                    if(dealer.getHandValue() == 21){
+                        console.log("You lost!");
+                    }
+                    else if(dealer.getHandValue() > 21){
+                        console.log("Dealer busts. You won!");
+                    }    
                     else{
-                        console.log("You win!");
-                    }   
+                        if(21 - dealer.getHandValue() < 21 - player.getHandValue()){
+                        console.log("Dealer wins. You lost!");
+                        }
+                        else{
+                            console.log("You win!");
+                        }   
+                    }
+
                 }
-    }});
-}
+        }});
+    }
+
 
 
 function hitBtn(){
     const hitBtn = window.addEventListener('click',function(event){
         if(event.clientX >= 160 && event.clientX <= 260 &&
-            event.clientY >= 470 && event.clientY <= 510){
+            event.clientY >= 500 && event.clientY <= 540){
             if(player.getHandValue() < 21){
                 console.log("HIT");
                 player.hand.push(deck.getCard()); 
-                player.displayHand(50,330);
+                player.displayHand(50,350);
 
                 if(player.getHandValue() == 21){
                     console.log("You won!");
@@ -227,4 +247,3 @@ function populateDeck(){
     deck.cards.push(new Card(2,'../blackjack/Cards/Clubs/2-Club.png'));
     deck.cards.push(new Card(1,'../blackjack/Cards/Clubs/A-Club.png'));
 }
-
